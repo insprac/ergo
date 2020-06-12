@@ -39,7 +39,7 @@ defmodule Ergo.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:cony, "~> 0.2.4"},
-      {:dialyxir, "~> 1.0"}
+      {:dialyxir, "~> 1.0", runtime: false}
     ]
   end
 
