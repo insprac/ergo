@@ -50,4 +50,19 @@ defmodule ErgoWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug ErgoWeb.Router
+
+  def init(_key, options) do
+    host = Ergo.Config.get!(:web_host)
+    port = Ergo.Config.get!(:web_port)
+    secret_key_base = Ergo.Config.get!(:web_secret_key_base)
+    live_view_signing_salt = Ergo.Config.get!(:web_live_view_signing_salt)
+    options =
+      Keyword.merge(options, [
+        http: [:inet6, port: port],
+        url: [host: host, port: port],
+        secret_key_base: secret_key_base,
+        live_view: [signing_salt: live_view_signing_salt]
+      ])
+    {:ok, options}
+  end
 end
