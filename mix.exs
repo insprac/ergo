@@ -10,7 +10,8 @@ defmodule Ergo.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [plt_add_deps: :transitive]
     ]
   end
 
@@ -37,7 +38,8 @@ defmodule Ergo.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:cony, "~> 0.2.4"}
+      {:cony, "~> 0.2.4"},
+      {:dialyxir, "~> 1.0"}
     ]
   end
 

@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+name: Test and Checks
+
+jobs:
+  build:
+    name: Test and Checks
+    runs-on: alpine-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Extract version number
+      id: version
+      run: |
+        export APP_VSN=`awk -F'"' '/version:/ { print $2 }' apps/audit/mix.exs`
+        echo "::set-output name=app-version::$APP_VSN"
+
+    - name: Test 
+      uses: bitwalker/alpine-elixir-phoenix
+      run: mix do deps.get, test
+      env:
+        ERGO_TEST_WEB_HOST: localhost
+        ERGO_TEST_WEB_PORT: 4002
+        ERGO_TEST_WEB_SECRET_KEY_BASE: "ieY8HWj3z69gMG6AwrJtL4dtE865jBi4sj4QW8hmuB4KZAUREunBdH7UVCNfARt8"
+        ERGO_TEST_WEB_LIVE_VIEW_SIGNING_SALT: "abc123"
+
+    - name: Dialyzer
+      uses: bitwalker/alpine-elixir-phoenix
+      run: mix do deps.get, dialyzer
