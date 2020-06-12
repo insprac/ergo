@@ -9,20 +9,32 @@ name: Test and Checks
 jobs:
   build:
     name: Test and Checks
-    runs-on: bitwalker/alpine-elixir-phoenix
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Extract version number
-      id: version
+    - name: Setup Elixir
+      uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: 22.2.6
+        elixir-version: 1.10.1
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+
+    - name: Setup Components
       run: |
-        export APP_VSN=`awk -F'"' '/version:/ { print $2 }' apps/audit/mix.exs`
-        echo "::set-output name=app-version::$APP_VSN"
+        mix local.rebar --force
+        mix local.hex --force
+        mix deps.get
+        npm install --prefix assets
 
     - name: Test
-      run: mix do deps.get, test
+      run: mix test
       env:
         ERGO_TEST_WEB_HOST: localhost
         ERGO_TEST_WEB_PORT: 4002
@@ -30,4 +42,4 @@ jobs:
         ERGO_TEST_WEB_LIVE_VIEW_SIGNING_SALT: "abc123"
 
     - name: Dialyzer
-      run: mix do deps.get, dialyzer
+      run: mix dialyzer
