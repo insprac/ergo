@@ -31,7 +31,10 @@ jobs:
         mix local.rebar --force
         mix local.hex --force
         mix deps.get
+        mix compile
         npm install --prefix assets
+        git config --global user.email "mail@insprac.io"
+        git config --global user.name "insprac"
 
     - name: Test
       run: mix test
